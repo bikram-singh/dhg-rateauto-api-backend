@@ -1,60 +1,91 @@
-from sqlalchemy import Column, Integer, String, Boolean, Numeric, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from app.database import Base
+from pydantic import BaseModel
+from datetime import datetime
+from decimal import Decimal
+from typing import Optional
 
 
-class Department(Base):
-    __tablename__ = "departments"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, nullable=False)
-    description = Column(String(255))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    pricing = relationship("Pricing", back_populates="department")
+# ── Department ────────────────────────────────────────────
+class DepartmentBase(BaseModel):
+    name: str
+    description: Optional[str] = None
 
 
-class Hospital(Base):
-    __tablename__ = "hospitals"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(150), nullable=False)
-    location = Column(String(100))
-    address = Column(String(255))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    pricing = relationship("Pricing", back_populates="hospital")
+class DepartmentCreate(DepartmentBase):
+    pass
 
 
-class Vaccine(Base):
-    __tablename__ = "vaccines"
+class DepartmentResponse(DepartmentBase):
+    id: int
+    created_at: Optional[datetime] = None
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(150), nullable=False)
-    manufacturer = Column(String(150))
-    description = Column(String(255))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    pricing = relationship("Pricing", back_populates="vaccine")
+    class Config:
+        from_attributes = True
 
 
-class Pricing(Base):
-    __tablename__ = "pricing"
+# ── Hospital ──────────────────────────────────────────────
+class HospitalBase(BaseModel):
+    name: str
+    location: Optional[str] = None
+    address: Optional[str] = None
 
-    id = Column(Integer, primary_key=True, index=True)
-    vaccine_id = Column(Integer, ForeignKey("vaccines.id"), nullable=False)
-    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=False)
-    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
-    price = Column(Numeric(10, 2), nullable=False)
-    insurance_covered = Column(String(20), default="No")
-    status = Column(String(20), default="Available")
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    vaccine = relationship("Vaccine", back_populates="pricing")
-    hospital = relationship("Hospital", back_populates="pricing")
-    department = relationship("Department", back_populates="pricing")
+class HospitalCreate(HospitalBase):
+    pass
+
+
+class HospitalResponse(HospitalBase):
+    id: int
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ── Vaccine ───────────────────────────────────────────────
+class VaccineBase(BaseModel):
+    name: str
+    manufacturer: Optional[str] = None
+    description: Optional[str] = None
+
+
+class VaccineCreate(VaccineBase):
+    pass
+
+
+class VaccineResponse(VaccineBase):
+    id: int
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ── Pricing ───────────────────────────────────────────────
+class PricingBase(BaseModel):
+    vaccine_id: int
+    hospital_id: int
+    department_id: int
+    price: Decimal
+    insurance_covered: Optional[str] = "No"
+    status: Optional[str] = "Available"
+
+
+class PricingCreate(PricingBase):
+    pass
+
+
+class PricingUpdate(BaseModel):
+    price: Optional[Decimal] = None
+    insurance_covered: Optional[str] = None
+    status: Optional[str] = None
+
+
+class PricingResponse(PricingBase):
+    id: int
+    created_at: Optional[datetime] = None
+    vaccine: Optional[VaccineResponse] = None
+    hospital: Optional[HospitalResponse] = None
+    department: Optional[DepartmentResponse] = None
+
+    class Config:
+        from_attributes = True
