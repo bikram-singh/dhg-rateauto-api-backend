@@ -13,6 +13,13 @@ class Base(DeclarativeBase):
 
 async def init_db():
     global engine, AsyncSessionLocal
+
+    # Import all models so SQLAlchemy registers them before create_all
+    import app.models.department  # noqa: F401
+    import app.models.hospital    # noqa: F401
+    import app.models.vaccine     # noqa: F401
+    import app.models.pricing     # noqa: F401
+
     engine = create_async_engine(
         settings.DATABASE_URL,
         echo=False,
