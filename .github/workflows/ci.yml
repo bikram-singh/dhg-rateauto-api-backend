@@ -23,7 +23,6 @@ env:
   GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
   GAR_REPOSITORY: "dhg-vaccinefee-repo"
   APP_NAME: "dhg-vaccinefee-api"
-  WORKING_DIR: "dhg-vaccinefee-api"
 
 jobs:
   setup:
@@ -45,7 +44,6 @@ jobs:
         run: |
           APP_VERSION="${GITHUB_SHA}"
           IMAGE_URL="us-central1-docker.pkg.dev/dhg-vaccine-rateauto-nonpord/dhg-vaccinefee-repo/dhg-vaccinefee-api:${APP_VERSION}"
-
           echo "APP_NAME=dhg-vaccinefee-api" >> "$GITHUB_OUTPUT"
           echo "APP_VERSION=${APP_VERSION}" >> "$GITHUB_OUTPUT"
           echo "IMAGE_URL=${IMAGE_URL}" >> "$GITHUB_OUTPUT"
@@ -82,9 +80,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     if: ${{ needs.setup.outputs.ABORT != 'true' }}
-    defaults:
-      run:
-        working-directory: dhg-vaccinefee-api
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,7 +89,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: dhg-vaccinefee-api/requirements.txt
+          cache-dependency-path: requirements.txt
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -141,10 +136,10 @@ jobs:
           IMAGE_URL: ${{ needs.setup.outputs.IMAGE_URL }}
         run: |
           docker buildx build \
-            -f dhg-vaccinefee-api/Docker/Dockerfile \
+            -f Docker/Dockerfile \
             -t "$IMAGE_URL" \
             --push \
-            dhg-vaccinefee-api/
+            .
 
   deploy-dev:
     name: Deploy to GKE Dev
@@ -162,7 +157,7 @@ jobs:
       GKE_CLUSTER: "dhg-rateauto-dev-gke-cluster"
       GKE_NAMESPACE: "dhg-rateauto-dev-namespace"
       GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
-      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      K8S_MANIFESTS_DIR: k8s
       DEPLOYMENT_NAME: "dhg-vaccinefee-api"
       SERVICE_NAME: "dhg-vaccinefee-api-service"
       SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
@@ -187,7 +182,7 @@ jobs:
       GKE_CLUSTER: "dhg-rateauto-test-gke-cluster"
       GKE_NAMESPACE: "dhg-rateauto-test-namespace"
       GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
-      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      K8S_MANIFESTS_DIR: k8s
       DEPLOYMENT_NAME: "dhg-vaccinefee-api"
       SERVICE_NAME: "dhg-vaccinefee-api-service"
       SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
@@ -210,7 +205,7 @@ jobs:
       GKE_CLUSTER: "dhg-rateauto-stage-gke-cluster"
       GKE_NAMESPACE: "dhg-rateauto-test-namespace"
       GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
-      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      K8S_MANIFESTS_DIR: k8s
       DEPLOYMENT_NAME: "dhg-vaccinefee-api"
       SERVICE_NAME: "dhg-vaccinefee-api-service"
       SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
