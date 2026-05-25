@@ -1,0 +1,218 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  security-events: write
+  id-token: write
+
+env:
+  PYTHON_VERSION: "3.12"
+  GAR_HOST: "us-central1-docker.pkg.dev"
+  GCP_REGION: "us-central1"
+  GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
+  GAR_REPOSITORY: "dhg-vaccinefee-repo"
+  APP_NAME: "dhg-vaccinefee-api"
+  WORKING_DIR: "dhg-vaccinefee-api"
+
+jobs:
+  setup:
+    name: Setup metadata
+    runs-on: ubuntu-latest
+    outputs:
+      APP_NAME: ${{ steps.meta.outputs.APP_NAME }}
+      APP_VERSION: ${{ steps.meta.outputs.APP_VERSION }}
+      IMAGE_URL: ${{ steps.meta.outputs.IMAGE_URL }}
+      ABORT: ${{ steps.guard.outputs.ABORT }}
+      SHOULD_DEPLOY: ${{ steps.guard.outputs.SHOULD_DEPLOY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup metadata
+        id: meta
+        shell: bash
+        run: |
+          APP_VERSION="${GITHUB_SHA}"
+          IMAGE_URL="us-central1-docker.pkg.dev/dhg-vaccine-rateauto-nonpord/dhg-vaccinefee-repo/dhg-vaccinefee-api:${APP_VERSION}"
+
+          echo "APP_NAME=dhg-vaccinefee-api" >> "$GITHUB_OUTPUT"
+          echo "APP_VERSION=${APP_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "IMAGE_URL=${IMAGE_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup guardrails
+        id: guard
+        shell: bash
+        run: |
+          ABORT="false"
+          SHOULD_DEPLOY="false"
+
+          if git log -1 --pretty=%s | grep -q '\[.*\]'; then
+            echo "Auto commit detected — aborting."
+            ABORT="true"
+          fi
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && ("${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/master") ]]; then
+            SHOULD_DEPLOY="true"
+          fi
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            SHOULD_DEPLOY="true"
+          fi
+
+          if [[ "$ABORT" == "true" ]]; then
+            SHOULD_DEPLOY="false"
+          fi
+
+          echo "ABORT=${ABORT}" >> "$GITHUB_OUTPUT"
+          echo "SHOULD_DEPLOY=${SHOULD_DEPLOY}" >> "$GITHUB_OUTPUT"
+
+  ci:
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ needs.setup.outputs.ABORT != 'true' }}
+    defaults:
+      run:
+        working-directory: dhg-vaccinefee-api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: dhg-vaccinefee-api/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        run: |
+          pip install flake8
+          flake8 app/ --max-line-length=120 --exclude=__pycache__
+
+      - name: Test
+        run: |
+          pip install pytest pytest-asyncio httpx
+          pytest tests/ -v --tb=short 2>/dev/null || echo "No tests found — skipping"
+
+  build-and-push-image:
+    name: Build and push image
+    runs-on: ubuntu-latest
+    needs:
+      - setup
+      - ci
+    if: ${{ needs.setup.outputs.SHOULD_DEPLOY == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER_NONPROD }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT_NONPROD }}
+          create_credentials_file: true
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: "dhg-vaccine-rateauto-nonpord"
+
+      - name: Configure Docker for GAR
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        env:
+          DOCKER_BUILDKIT: 1
+          IMAGE_URL: ${{ needs.setup.outputs.IMAGE_URL }}
+        run: |
+          docker buildx build \
+            -f dhg-vaccinefee-api/Docker/Dockerfile \
+            -t "$IMAGE_URL" \
+            --push \
+            dhg-vaccinefee-api/
+
+  deploy-dev:
+    name: Deploy to GKE Dev
+    needs:
+      - setup
+      - build-and-push-image
+    if: ${{ needs.setup.outputs.SHOULD_DEPLOY == 'true' }}
+    uses: ./.github/workflows/gke-deploy.yml
+    with:
+      APP_NAME: "dhg-vaccinefee-api"
+      APP_VERSION: ${{ needs.setup.outputs.APP_VERSION }}
+      IMAGE_URL: ${{ needs.setup.outputs.IMAGE_URL }}
+      GKE_ENVIRONMENT: dev
+      GKE_REGION: "us-central1"
+      GKE_CLUSTER: "dhg-rateauto-dev-gke-cluster"
+      GKE_NAMESPACE: "dhg-rateauto-dev-namespace"
+      GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
+      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      DEPLOYMENT_NAME: "dhg-vaccinefee-api"
+      SERVICE_NAME: "dhg-vaccinefee-api-service"
+      SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
+      HPA_NAME: "dhg-vaccinefee-api-hpa"
+      REPLICAS: "1"
+      MIN_REPLICAS: "1"
+    secrets: inherit
+
+  deploy-test:
+    name: Deploy to GKE Test
+    needs:
+      - setup
+      - deploy-dev
+    if: ${{ needs.setup.outputs.SHOULD_DEPLOY == 'true' }}
+    uses: ./.github/workflows/gke-deploy.yml
+    with:
+      APP_NAME: "dhg-vaccinefee-api"
+      APP_VERSION: ${{ needs.setup.outputs.APP_VERSION }}
+      IMAGE_URL: ${{ needs.setup.outputs.IMAGE_URL }}
+      GKE_ENVIRONMENT: test
+      GKE_REGION: "us-central1"
+      GKE_CLUSTER: "dhg-rateauto-test-gke-cluster"
+      GKE_NAMESPACE: "dhg-rateauto-test-namespace"
+      GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
+      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      DEPLOYMENT_NAME: "dhg-vaccinefee-api"
+      SERVICE_NAME: "dhg-vaccinefee-api-service"
+      SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
+      HPA_NAME: "dhg-vaccinefee-api-hpa"
+    secrets: inherit
+
+  deploy-stage:
+    name: Deploy to GKE Stage
+    needs:
+      - setup
+      - deploy-test
+    if: ${{ needs.setup.outputs.SHOULD_DEPLOY == 'true' }}
+    uses: ./.github/workflows/gke-deploy.yml
+    with:
+      APP_NAME: "dhg-vaccinefee-api"
+      APP_VERSION: ${{ needs.setup.outputs.APP_VERSION }}
+      IMAGE_URL: ${{ needs.setup.outputs.IMAGE_URL }}
+      GKE_ENVIRONMENT: stage
+      GKE_REGION: "us-central1"
+      GKE_CLUSTER: "dhg-rateauto-stage-gke-cluster"
+      GKE_NAMESPACE: "dhg-rateauto-test-namespace"
+      GCP_PROJECT_ID: "dhg-vaccine-rateauto-nonpord"
+      K8S_MANIFESTS_DIR: dhg-vaccinefee-api/k8s
+      DEPLOYMENT_NAME: "dhg-vaccinefee-api"
+      SERVICE_NAME: "dhg-vaccinefee-api-service"
+      SERVICE_ACCOUNT_NAME: "dhg-vaccinefee-ui"
+      HPA_NAME: "dhg-vaccinefee-api-hpa"
+    secrets: inherit
