@@ -41,7 +41,7 @@ async def init_db():
         engine, class_=AsyncSession, expire_on_commit=False
     )
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
 
 async def close_db():
