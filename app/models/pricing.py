@@ -6,6 +6,7 @@ from app.database import Base
 
 class Pricing(Base):
     __tablename__ = "pricing"
+    __table_args__ = {"extend_existing": True}
 
     id = Column(Integer, primary_key=True, index=True)
     vaccine_id = Column(Integer, ForeignKey("vaccines.id"), nullable=False)
