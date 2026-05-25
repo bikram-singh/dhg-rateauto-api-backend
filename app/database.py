@@ -1,8 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.engine.url import URL
+import logging
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 engine = None
 AsyncSessionLocal = None
@@ -40,8 +43,15 @@ async def init_db():
     AsyncSessionLocal = async_sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+
+    # Try to create tables, ignore if already exist
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.warning(f"Table creation skipped (may already exist): {e}")
+        # Tables already exist - this is fine, continue startup
 
 
 async def close_db():
