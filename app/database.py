@@ -20,8 +20,19 @@ async def init_db():
     import app.models.vaccine     # noqa: F401
     import app.models.pricing     # noqa: F401
 
+    # Use URL with quoted database name to handle hyphens
+    from sqlalchemy.engine.url import URL
+    db_url = URL.create(
+        drivername="postgresql+asyncpg",
+        username=settings.DB_USER,
+        password=settings.DB_PASSWORD,
+        host=settings.DB_HOST,
+        port=settings.DB_PORT,
+        database=settings.DB_NAME,
+    )
+
     engine = create_async_engine(
-        settings.DATABASE_URL,
+        db_url,
         echo=False,
         pool_pre_ping=True,
         pool_size=5,
