@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.engine.url import URL
 
 from app.config import settings
 
@@ -20,8 +21,6 @@ async def init_db():
     import app.models.vaccine     # noqa: F401
     import app.models.pricing     # noqa: F401
 
-    # Use URL with quoted database name to handle hyphens
-    from sqlalchemy.engine.url import URL
     db_url = URL.create(
         drivername="postgresql+asyncpg",
         username=settings.DB_USER,

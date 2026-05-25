@@ -28,10 +28,6 @@ spec:
         app.kubernetes.io/component: api
         app.kubernetes.io/version: __APP_VERSION__
         app.kubernetes.io/environment: __ENVIRONMENT__
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "__CONTAINER_PORT__"
-        prometheus.io/path: "/vaccinefee/api/health"
     spec:
       serviceAccountName: __SERVICE_ACCOUNT_NAME__
       containers:
@@ -45,22 +41,36 @@ spec:
           env:
             - name: PORT
               value: "__CONTAINER_PORT__"
-            - name: NODE_ENV
-              value: production
             - name: APP_ENV
               value: __ENVIRONMENT__
             - name: GCP_PROJECT_ID
               value: "dhg-vaccine-rateauto-nonpord"
+            # DB credentials from Kubernetes Secret
             - name: DB_HOST
-              value: "10.10.0.3"
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-db-secret
+                  key: DB_HOST
             - name: DB_PORT
-              value: "5432"
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-db-secret
+                  key: DB_PORT
             - name: DB_NAME
-              value: "dhg-vaccinefee-db"
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-db-secret
+                  key: DB_NAME
             - name: DB_USER
-              value: "dhg-vaccinefee-user"
-            - name: DB_SECRET_NAME
-              value: "dhg-vaccinefee-secret"
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-db-secret
+                  key: DB_PASSWORD
           resources:
             requests:
               memory: __REQUEST_MEMORY__
