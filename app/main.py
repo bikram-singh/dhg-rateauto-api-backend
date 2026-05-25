@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from app.database import init_db, close_db
@@ -46,3 +47,9 @@ async def health_check():
 @app.get("/healthz", tags=["Health"])
 async def liveness():
     return {"status": "ok"}
+
+
+# Root path - returns 200 for GCP LB health checks
+@app.get("/", tags=["Health"])
+async def root():
+    return JSONResponse(content={"status": "ok"}, status_code=200)
