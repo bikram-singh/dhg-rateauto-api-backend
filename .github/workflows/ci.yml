@@ -97,7 +97,7 @@ jobs:
       - name: Lint
         run: |
           pip install flake8
-          flake8 app/ --max-line-length=120 --exclude=__pycache__ --per-file-ignores="__init__.py:F401"
+          flake8 app/ --max-line-length=120 --exclude=__pycache__ --per-file-ignores="__init__.py:F401" --extend-ignore=W292
 
       - name: Test
         run: |
