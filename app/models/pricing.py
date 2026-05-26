@@ -8,7 +8,7 @@ class Pricing(Base):
     __tablename__ = "pricing"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     vaccine_id = Column(Integer, ForeignKey("vaccines.id"), nullable=False)
     hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=False)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
@@ -18,6 +18,6 @@ class Pricing(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    vaccine = relationship("Vaccine", back_populates="pricing")
-    hospital = relationship("Hospital", back_populates="pricing")
-    department = relationship("Department", back_populates="pricing")
+    vaccine = relationship("app.models.vaccine.Vaccine", back_populates="pricing")
+    hospital = relationship("app.models.hospital.Hospital", back_populates="pricing")
+    department = relationship("app.models.department.Department", back_populates="pricing")
