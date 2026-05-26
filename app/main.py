@@ -3,6 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
+# Import models ONCE here - before anything else
+import app.models.department  # noqa: F401
+import app.models.hospital    # noqa: F401
+import app.models.vaccine     # noqa: F401
+import app.models.pricing     # noqa: F401
+
 from app.database import init_db, close_db
 from app.routers import vaccines, hospitals, departments, pricing
 
@@ -32,7 +38,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Routers ──────────────────────────────────────────────
 app.include_router(vaccines.router,    prefix="/vaccinefee/api")
 app.include_router(hospitals.router,   prefix="/vaccinefee/api")
 app.include_router(departments.router, prefix="/vaccinefee/api")
@@ -49,7 +54,6 @@ async def liveness():
     return {"status": "ok"}
 
 
-# Root path - returns 200 for GCP LB health checks
 @app.get("/", tags=["Health"])
 async def root():
     return JSONResponse(content={"status": "ok"}, status_code=200)

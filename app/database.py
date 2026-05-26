@@ -18,12 +18,6 @@ class Base(DeclarativeBase):
 async def init_db():
     global engine, AsyncSessionLocal
 
-    # Import all models so SQLAlchemy registers them before create_all
-    import app.models.department  # noqa: F401
-    import app.models.hospital    # noqa: F401
-    import app.models.vaccine     # noqa: F401
-    import app.models.pricing     # noqa: F401
-
     db_url = URL.create(
         drivername="postgresql+asyncpg",
         username=settings.DB_USER,
@@ -44,14 +38,12 @@ async def init_db():
         engine, class_=AsyncSession, expire_on_commit=False
     )
 
-    # Try to create tables, ignore if already exist
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all, checkfirst=True)
         logger.info("Database tables initialized successfully")
     except Exception as e:
         logger.warning(f"Table creation skipped (may already exist): {e}")
-        # Tables already exist - this is fine, continue startup
 
 
 async def close_db():
