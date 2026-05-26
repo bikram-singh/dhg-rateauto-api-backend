@@ -142,7 +142,7 @@ jobs:
             .
 
   deploy-dev:
-    name: Deploy to GKE Dev
+    name: GKE-Dev
     needs:
       - setup
       - build-and-push-image
@@ -167,7 +167,7 @@ jobs:
     secrets: inherit
 
 # deploy-test:
-#   name: Deploy to GKE Test
+#   name: GKE-Test
 #   needs:
 #     - setup
 #     - deploy-dev
@@ -190,7 +190,7 @@ jobs:
 #   secrets: inherit
 
 # deploy-stage:
-#   name: Deploy to GKE Stage
+#   name: GKE-Stage
 #   needs:
 #     - setup
 #     - deploy-test
