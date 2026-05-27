@@ -1,5 +1,3 @@
-from app.routers import ai_advisor
-app.include_router(ai_advisor.router)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -12,7 +10,7 @@ import app.models.vaccine     # noqa: F401
 import app.models.pricing     # noqa: F401
 
 from app.database import init_db, close_db
-from app.routers import vaccines, hospitals, departments, pricing
+from app.routers import vaccines, hospitals, departments, pricing, ai_advisor
 
 
 @asynccontextmanager
@@ -44,6 +42,7 @@ app.include_router(vaccines.router,    prefix="/vaccinefee/api")
 app.include_router(hospitals.router,   prefix="/vaccinefee/api")
 app.include_router(departments.router, prefix="/vaccinefee/api")
 app.include_router(pricing.router,     prefix="/vaccinefee/api")
+app.include_router(ai_advisor.router,  prefix="/vaccinefee/api")
 
 
 @app.get("/vaccinefee/api/health", tags=["Health"])
