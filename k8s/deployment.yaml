@@ -45,7 +45,6 @@ spec:
               value: __ENVIRONMENT__
             - name: GCP_PROJECT_ID
               value: "dhg-vaccine-rateauto-nonpord"
-            # DB credentials from Kubernetes Secret
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
@@ -71,6 +70,11 @@ spec:
                 secretKeyRef:
                   name: dhg-vaccinefee-db-secret
                   key: DB_PASSWORD
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dhg-vaccinefee-anthropic-api-secret
+                  key: ANTHROPIC_API_KEY
           resources:
             requests:
               memory: __REQUEST_MEMORY__
