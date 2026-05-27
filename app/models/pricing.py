@@ -7,13 +7,13 @@ class Pricing(Base):
     __tablename__ = "pricing"
     __table_args__ = {"extend_existing": True}
 
-    id             = Column(Integer, primary_key=True)
-    vaccine_id     = Column(Integer, ForeignKey("vaccines.id"), nullable=False)
-    hospital_id    = Column(Integer, ForeignKey("hospitals.id"), nullable=False)
-    department_id  = Column(Integer, ForeignKey("departments.id"), nullable=False)
-    price          = Column(Numeric(10, 2), nullable=False)
+    id = Column(Integer, primary_key=True)
+    vaccine_id = Column(Integer, ForeignKey("vaccines.id"), nullable=False)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    price = Column(Numeric(10, 2), nullable=False)
     insurance_covered = Column(String(20), default="No")
-    status         = Column(String(20), default="Available")
+    status = Column(String(20), default="Available")
     stock_quantity = Column(Integer, default=100)
-    created_at     = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at     = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

@@ -3,14 +3,19 @@ from typing import Optional
 from datetime import datetime
 
 
-# ── Vaccine ──
 class VaccineBase(BaseModel):
     name: str
     manufacturer: Optional[str] = None
     description: Optional[str] = None
 
-class VaccineCreate(VaccineBase): pass
-class VaccineUpdate(VaccineBase): pass
+
+class VaccineCreate(VaccineBase):
+    pass
+
+
+class VaccineUpdate(VaccineBase):
+    pass
+
 
 class VaccineResponse(VaccineBase):
     id: int
@@ -18,14 +23,19 @@ class VaccineResponse(VaccineBase):
     model_config = {"from_attributes": True}
 
 
-# ── Hospital ──
 class HospitalBase(BaseModel):
     name: str
     location: Optional[str] = None
     address: Optional[str] = None
 
-class HospitalCreate(HospitalBase): pass
-class HospitalUpdate(HospitalBase): pass
+
+class HospitalCreate(HospitalBase):
+    pass
+
+
+class HospitalUpdate(HospitalBase):
+    pass
+
 
 class HospitalResponse(HospitalBase):
     id: int
@@ -33,13 +43,18 @@ class HospitalResponse(HospitalBase):
     model_config = {"from_attributes": True}
 
 
-# ── Department ──
 class DepartmentBase(BaseModel):
     name: str
     description: Optional[str] = None
 
-class DepartmentCreate(DepartmentBase): pass
-class DepartmentUpdate(DepartmentBase): pass
+
+class DepartmentCreate(DepartmentBase):
+    pass
+
+
+class DepartmentUpdate(DepartmentBase):
+    pass
+
 
 class DepartmentResponse(DepartmentBase):
     id: int
@@ -47,35 +62,38 @@ class DepartmentResponse(DepartmentBase):
     model_config = {"from_attributes": True}
 
 
-# ── Pricing ──
 class PricingBase(BaseModel):
-    vaccine_id:    int
-    hospital_id:   int
+    vaccine_id: int
+    hospital_id: int
     department_id: int
-    price:         float
+    price: float
     insurance_covered: Optional[str] = "No"
-    status:        Optional[str] = "Available"
+    status: Optional[str] = "Available"
     stock_quantity: Optional[int] = 100
 
-class PricingCreate(PricingBase): pass
+
+class PricingCreate(PricingBase):
+    pass
+
 
 class PricingUpdate(BaseModel):
-    price:         Optional[float] = None
+    price: Optional[float] = None
     insurance_covered: Optional[str] = None
-    status:        Optional[str] = None
+    status: Optional[str] = None
     stock_quantity: Optional[int] = None
 
+
 class PricingResponse(BaseModel):
-    id:            int
-    vaccine_id:    int
-    hospital_id:   int
+    id: int
+    vaccine_id: int
+    hospital_id: int
     department_id: int
-    price:         float
+    price: float
     insurance_covered: Optional[str] = None
-    status:        Optional[str] = None
+    status: Optional[str] = None
     stock_quantity: Optional[int] = None
-    created_at:    Optional[datetime] = None
-    vaccine:       Optional[VaccineResponse] = None
-    hospital:      Optional[HospitalResponse] = None
-    department:    Optional[DepartmentResponse] = None
+    created_at: Optional[datetime] = None
+    vaccine: Optional[VaccineResponse] = None
+    hospital: Optional[HospitalResponse] = None
+    department: Optional[DepartmentResponse] = None
     model_config = {"from_attributes": True}
