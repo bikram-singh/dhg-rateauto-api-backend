@@ -8,9 +8,10 @@ import app.models.department  # noqa: F401
 import app.models.hospital    # noqa: F401
 import app.models.vaccine     # noqa: F401
 import app.models.pricing     # noqa: F401
+import app.models.user        # noqa: F401
 
 from app.database import init_db, close_db
-from app.routers import vaccines, hospitals, departments, pricing, ai_advisor
+from app.routers import vaccines, hospitals, departments, pricing, ai_advisor, auth
 
 
 @asynccontextmanager
@@ -43,6 +44,7 @@ app.include_router(hospitals.router,   prefix="/vaccinefee/api")
 app.include_router(departments.router, prefix="/vaccinefee/api")
 app.include_router(pricing.router,     prefix="/vaccinefee/api")
 app.include_router(ai_advisor.router,  prefix="/vaccinefee/api")
+app.include_router(auth.router,        prefix="/vaccinefee/api")
 
 
 @app.get("/vaccinefee/api/health", tags=["Health"])
