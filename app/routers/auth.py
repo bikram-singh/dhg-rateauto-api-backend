@@ -16,38 +16,38 @@ from app.models.user import User
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 # Config
-SECRET_KEY   = os.getenv("JWT_SECRET_KEY", "dhg-vaccine-super-secret-key-change-in-production")
-ALGORITHM    = "HS256"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dhg-vaccine-super-secret-key-change-in-production")
+ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 
-pwd_context  = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/vaccinefee/api/auth/login")
 
 
-# ── Schemas ──
+# -- Schemas --
 class Token(BaseModel):
     access_token: str
-    token_type:   str
-    user:         dict
+    token_type: str
+    user: dict
 
 
 class UserCreate(BaseModel):
-    username:  str
-    password:  str
+    username: str
+    password: str
     full_name: Optional[str] = None
-    role:      Optional[str] = "Viewer"
+    role: Optional[str] = "Viewer"
 
 
 class UserResponse(BaseModel):
-    id:        int
-    username:  str
+    id: int
+    username: str
     full_name: Optional[str]
-    role:      str
+    role: str
     is_active: bool
     model_config = {"from_attributes": True}
 
 
-# ── Helpers ──
+# -- Helpers --
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
@@ -73,7 +73,7 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload  = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         if not username:
             raise credentials_exception
@@ -81,7 +81,7 @@ async def get_current_user(
         raise credentials_exception
 
     result = await db.execute(select(User).where(User.username == username))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
     if not user or not user.is_active:
         raise credentials_exception
     return user
@@ -93,14 +93,14 @@ def require_admin(current_user: User = Depends(get_current_user)) -> User:
     return current_user
 
 
-# ── Routes ──
+# -- Routes --
 @router.post("/login", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(select(User).where(User.username == form_data.username))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
 
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
@@ -115,12 +115,12 @@ async def login(
     token = create_access_token(data={"sub": user.username, "role": user.role})
     return {
         "access_token": token,
-        "token_type":   "bearer",
+        "token_type": "bearer",
         "user": {
-            "id":        user.id,
-            "username":  user.username,
+            "id": user.id,
+            "username": user.username,
             "full_name": user.full_name,
-            "role":      user.role,
+            "role": user.role,
         }
     }
 
@@ -141,10 +141,10 @@ async def create_user(
         raise HTTPException(status_code=400, detail="Username already exists")
 
     user = User(
-        username      = data.username,
-        password_hash = hash_password(data.password),
-        full_name     = data.full_name,
-        role          = data.role or "Viewer",
+        username=data.username,
+        password_hash=hash_password(data.password),
+        full_name=data.full_name,
+        role=data.role or "Viewer",
     )
     db.add(user)
     await db.commit()
@@ -170,7 +170,7 @@ async def delete_user(
     if current_user.id == user_id:
         raise HTTPException(status_code=400, detail="Cannot delete yourself")
     result = await db.execute(select(User).where(User.id == user_id))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     await db.delete(user)
