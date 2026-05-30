@@ -27,7 +27,8 @@
 
 <br/>
 
-**❤️ Health Check:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/health`](https://dev.gcpcloudhub.shop/vaccinefee/api/health) &nbsp;|&nbsp;
+**❤️ Health Check:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/health`](https://dev.gcpcloudhub.shop/vaccinefee/api/health)
+
 **📖 Swagger UI:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/docs`](https://dev.gcpcloudhub.shop/vaccinefee/api/docs)
 
 </div>
@@ -102,27 +103,32 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 > 📌 **Note:** All images are stored in `docs/gallery/`. Add your screenshots there to display them here.
 
-### 📖 Swagger UI - Interactive API Docs
-![Swagger UI](docs/gallery/swagger-ui.png)
+### 📖 Swagger UI — Interactive API Docs
+![Swagger UI](docs/gallery/backend-swagger-ui.png)
 
 ---
 
 ### 🔐 Auth Endpoints
-![Auth Endpoints](docs/gallery/api-auth.png)
+![Auth Endpoints](docs/gallery/backend-api-auth.png)
 
 ---
 
 ### 💰 Pricing Endpoints
-![Pricing Endpoints](docs/gallery/api-pricing.png)
+![Pricing Endpoints](docs/gallery/backend-api-pricing.png)
 
 ---
 
-### 🔄 CI/CD Pipeline - GitHub Actions
+### ❤️ API Health Check
+![Backend API Health](docs/gallery/backend-api-health.png)
+
+---
+
+### 🔄 CI/CD Pipeline — GitHub Actions
 ![Backend CI/CD Pipeline](docs/gallery/backend-ci-cd-pipeline.png)
 
 ---
 
-### ☸️ GKE Workload - Deployment
+### ☸️ GKE Workload — Deployment
 ![Backend GKE Workload](docs/gallery/backend-gke-workload.png)
 
 ---
@@ -935,7 +941,8 @@ Commits on main
 
 <br/>
 
-❤️ **Health:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/health`](https://dev.gcpcloudhub.shop/vaccinefee/api/health) &nbsp;|&nbsp;
-📖 **Swagger:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/docs`](https://dev.gcpcloudhub.shop/vaccinefee/api/docs)
+**❤️ Health Check:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/health`](https://dev.gcpcloudhub.shop/vaccinefee/api/health)
+
+**📖 Swagger UI:** [`https://dev.gcpcloudhub.shop/vaccinefee/api/docs`](https://dev.gcpcloudhub.shop/vaccinefee/api/docs)
 
 </div>
