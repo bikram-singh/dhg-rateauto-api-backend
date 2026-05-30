@@ -5,7 +5,7 @@
 # ⚡ DHG Vaccine Fee Pricing API
 
 ### Enterprise Healthcare Backend · FastAPI · Async Python · Claude AI
-### `dhg-rateauto-api-backend` — Dummy Health Group
+### `dhg-rateauto-api-backend` - Dummy Health Group
 
 <br/>
 
@@ -61,9 +61,9 @@
 
 ## 🌐 Overview
 
-The **DHG Vaccine Fee Pricing API** is the backend engine powering the entire DHG healthcare platform. It is a fully **async FastAPI application** written in Python 3.12 — serving vaccine pricing data, hospital information, user authentication, and AI-powered consultation across 25+ REST endpoints.
+The **DHG Vaccine Fee Pricing API** is the backend engine powering the entire DHG healthcare platform. It is a fully **async FastAPI application** written in Python 3.12 - serving vaccine pricing data, hospital information, user authentication, and AI-powered consultation across 25+ REST endpoints.
 
-The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Connect (PSC)** — the database has no public IP and is only reachable from within the VPC. It is containerised with Docker (multi-stage build), deployed on **GKE Autopilot**, and served at `/vaccinefee/api` via the GKE Gateway API.
+The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Connect (PSC)** - the database has no public IP and is only reachable from within the VPC. It is containerised with Docker (multi-stage build), deployed on **GKE Autopilot**, and served at `/vaccinefee/api` via the GKE Gateway API.
 
 ### 🩺 What This API Powers
 
@@ -82,19 +82,19 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 | Metric | Value |
 |---|---|
-| ⚡ **Framework** | FastAPI 0.115.0 — async ASGI |
+| ⚡ **Framework** | FastAPI 0.115.0 - async ASGI |
 | 🐍 **Python** | 3.12 |
 | 🗄️ **Database** | PostgreSQL (Cloud SQL) via PSC at `10.10.0.3:5432` |
 | 📡 **ORM** | SQLAlchemy 2.0 async + asyncpg driver |
-| 🔐 **Auth** | JWT HS256 — 8-hour expiry + bcrypt password hashing |
+| 🔐 **Auth** | JWT HS256 - 8-hour expiry + bcrypt password hashing |
 | 🤖 **AI** | Claude Sonnet (`claude-sonnet-4-20250514`) |
 | 🏥 **Hospitals** | 108 real hospitals (India, USA, London, Tokyo, Singapore and more) |
-| 💉 **Vaccines** | 65 vaccines — global coverage with real manufacturers |
-| 💰 **Pricing Records** | 5,400+ records — realistic market prices |
+| 💉 **Vaccines** | 65 vaccines - global coverage with real manufacturers |
+| 💰 **Pricing Records** | 5,400+ records - realistic market prices |
 | 🌍 **Countries** | 15+ countries |
 | 📖 **API Docs** | Swagger UI v2.0.0 (`OAS 3.1`) at `/vaccinefee/api/docs` |
 | 🔄 **Deploy** | Zero-downtime rolling update on GKE |
-| 📦 **Docker** | Multi-stage — `python:3.12-slim` → production image |
+| 📦 **Docker** | Multi-stage - `python:3.12-slim` → production image |
 | 🚢 **Port** | 8080 (uvicorn) |
 
 ---
@@ -103,7 +103,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 > 📌 **Note:** All images are stored in `docs/gallery/`. Add your screenshots there to display them here.
 
-### 📖 Swagger UI — Interactive API Docs
+### 📖 Swagger UI - Interactive API Docs
 ![Swagger UI](docs/gallery/backend-swagger-ui.png)
 
 ---
@@ -123,12 +123,12 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 ---
 
-### 🔄 CI/CD Pipeline — GitHub Actions
+### 🔄 CI/CD Pipeline - GitHub Actions
 ![Backend CI/CD Pipeline](docs/gallery/backend-ci-cd-pipeline.png)
 
 ---
 
-### ☸️ GKE Workload — Deployment
+### ☸️ GKE Workload - Deployment
 ![Backend GKE Workload](docs/gallery/backend-gke-workload.png)
 
 ---
@@ -146,7 +146,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 | 🔌 **asyncpg** | 0.29.0 | Async PostgreSQL driver |
 | ✅ **Pydantic** | 2.9.2 | Request/response validation |
 | 🔐 **python-jose** | 3.3.0 | JWT token creation and validation |
-| 🔒 **bcrypt** | 4.0.1 | Password hashing (direct — not passlib) |
+| 🔒 **bcrypt** | 4.0.1 | Password hashing (direct - not passlib) |
 | 🌐 **httpx** | 0.27.2 | Async HTTP client for Anthropic API |
 | 📦 **python-multipart** | 0.0.12 | Form data parsing |
 
@@ -156,16 +156,16 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 |---|---|---|
 | 🐳 **Docker** | Multi-stage | `python:3.12-slim` builder → runtime image |
 | ☸️ **GKE Autopilot** | Latest stable | Production Kubernetes deployment |
-| 📦 **GAR** | — | Google Artifact Registry — Docker image storage |
-| 🔄 **GitHub Actions** | — | CI/CD: lint → test → push → deploy |
-| 🔐 **WIF** | — | Workload Identity Federation — no JSON keys |
+| 📦 **GAR** | - | Google Artifact Registry - Docker image storage |
+| 🔄 **GitHub Actions** | - | CI/CD: lint → test → push → deploy |
+| 🔐 **WIF** | - | Workload Identity Federation - no JSON keys |
 | 🐘 **Cloud SQL** | PostgreSQL | Managed database via PSC (private IP) |
 
 ### 🔌 External Integrations
 
 | Technology | Purpose |
 |---|---|
-| 🤖 **Anthropic Claude API** | AI Vaccine Advisor — `claude-sonnet-4-20250514` |
+| 🤖 **Anthropic Claude API** | AI Vaccine Advisor - `claude-sonnet-4-20250514` |
 | 🔐 **K8s Secrets** | `dhg-vaccinefee-db-secret`, `dhg-vaccinefee-anthropic-api-secret`, `dhg-vaccinefee-jwt-secret` |
 
 ---
@@ -176,7 +176,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `GET` | `/health` | ❌ Public | Health check — returns `{"status":"healthy","version":"2.0.0"}` |
+| `GET` | `/health` | ❌ Public | Health check - returns `{"status":"healthy","version":"2.0.0"}` |
 
 ---
 
@@ -184,7 +184,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `POST` | `/auth/login` | ❌ Public | Login — returns JWT token |
+| `POST` | `/auth/login` | ❌ Public | Login - returns JWT token |
 | `GET` | `/auth/me` | ✅ JWT | Get current user info |
 | `GET` | `/auth/users` | ✅ Admin | List all users |
 | `POST` | `/auth/users` | ✅ Admin | Create new user |
@@ -232,7 +232,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `GET` | `/pricing/` | ✅ JWT | List pricing records (paginated — limit/skip) |
+| `GET` | `/pricing/` | ✅ JWT | List pricing records (paginated - limit/skip) |
 | `GET` | `/pricing/{id}` | ✅ JWT | Get single pricing record |
 | `POST` | `/pricing/` | ✅ Admin | Create pricing record |
 | `PUT` | `/pricing/{id}` | ✅ Admin | Update pricing record |
@@ -244,7 +244,7 @@ The API connects to a **Cloud SQL PostgreSQL** instance via **Private Service Co
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `POST` | `/ai/chat` | ✅ JWT | Send message to Claude Sonnet — returns AI response |
+| `POST` | `/ai/chat` | ✅ JWT | Send message to Claude Sonnet - returns AI response |
 
 ---
 
@@ -262,8 +262,8 @@ dhg-rateauto-api-backend/
 │   └── 📄 Dockerfile             # Multi-stage: python:3.12-slim → production image
 │
 ├── 📁 k8s/
-│   ├── 📄 deployment.yaml        # K8s Deployment — 1 replica, rolling update
-│   ├── 📄 service.yaml           # ClusterIP Service — port 8080
+│   ├── 📄 deployment.yaml        # K8s Deployment - 1 replica, rolling update
+│   ├── 📄 service.yaml           # ClusterIP Service - port 8080
 │   ├── 📄 hpa.yaml               # Horizontal Pod Autoscaler
 │   └── 📄 serviceaccount.yaml    # K8s ServiceAccount for Workload Identity
 │
@@ -275,14 +275,14 @@ dhg-rateauto-api-backend/
 │
 ├── 📁 dhg-vaccinefee-api/        # FastAPI application root
 │   │
-│   ├── 📄 main.py                # ⭐ FastAPI app — CORS, lifespan, router registration, Swagger v2.0.0
+│   ├── 📄 main.py                # ⭐ FastAPI app - CORS, lifespan, router registration, Swagger v2.0.0
 │   ├── 📄 database.py            # Async SQLAlchemy engine + session factory
 │   │
 │   ├── 📁 models/                # SQLAlchemy ORM models
 │   │   ├── 📄 hospital.py        # Hospital table
 │   │   ├── 📄 vaccine.py         # Vaccine table
 │   │   ├── 📄 department.py      # Department table
-│   │   ├── 📄 pricing.py         # Pricing table (junction — vaccine × hospital × dept)
+│   │   ├── 📄 pricing.py         # Pricing table (junction - vaccine × hospital × dept)
 │   │   └── 📄 user.py            # Users table with bcrypt password hash
 │   │
 │   └── 📁 routers/               # FastAPI route handlers
@@ -297,7 +297,7 @@ dhg-rateauto-api-backend/
 │   └── 📄 test_*.py              # API endpoint tests
 │
 ├── 📄 requirements.txt           # Python dependencies (pinned versions)
-├── 📄 .bumpversion.cfg           # bump2version config — tracks VERSION file
+├── 📄 .bumpversion.cfg           # bump2version config - tracks VERSION file
 ├── 📄 VERSION                    # Plain text current version (e.g. 0.0.1)
 └── 📄 README.md                  # This file
 ```
@@ -306,7 +306,7 @@ dhg-rateauto-api-backend/
 
 ## 🗄️ Database Schema
 
-Five tables powering the entire platform — connected via foreign keys:
+Five tables powering the entire platform - connected via foreign keys:
 
 ```sql
 -- Hospitals (~150 rows)
@@ -317,7 +317,7 @@ CREATE TABLE hospitals (
   address  VARCHAR(500)      -- Full street address
 );
 
--- Vaccines (40 rows — real manufacturers)
+-- Vaccines (40 rows - real manufacturers)
 CREATE TABLE vaccines (
   id           SERIAL PRIMARY KEY,
   name         VARCHAR(200) NOT NULL,
@@ -332,7 +332,7 @@ CREATE TABLE departments (
   description TEXT
 );
 
--- Pricing (5,000+ rows — core data)
+-- Pricing (5,000+ rows - core data)
 CREATE TABLE pricing (
   id                SERIAL PRIMARY KEY,
   vaccine_id        INTEGER REFERENCES vaccines(id),
@@ -361,7 +361,7 @@ CREATE TABLE users (
 | Role | Username | Password | Access |
 |---|---|---|---|
 | 👑 **Admin** | `bikram` | `Admin@123` | Full CRUD on all endpoints |
-| 👁️ **Viewer** | `viewer` | `View@123` | Read-only — write endpoints return 403 |
+| 👁️ **Viewer** | `viewer` | `View@123` | Read-only - write endpoints return 403 |
 
 ---
 
@@ -416,16 +416,16 @@ async def create_hospital(
 ### Why bcrypt directly (not passlib)?
 
 ```python
-# ✅ Direct bcrypt — compatible with bcrypt 4.0.1
+# ✅ Direct bcrypt - compatible with bcrypt 4.0.1
 import bcrypt
 hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 valid  = bcrypt.checkpw(password.encode("utf-8"), stored_hash)
 
-# ❌ passlib — incompatible with bcrypt >= 4.0.0
+# ❌ passlib - incompatible with bcrypt >= 4.0.0
 # from passlib.context import CryptContext  ← breaks with bcrypt 5.x
 ```
 
-`bcrypt` is pinned to `4.0.1` in `requirements.txt` — this was a specific compatibility fix during development.
+`bcrypt` is pinned to `4.0.1` in `requirements.txt` - this was a specific compatibility fix during development.
 
 ---
 
@@ -491,7 +491,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)):
 
 ## ⚙️ Async Architecture
 
-The entire API is **async end-to-end** — from HTTP request handling down to database queries:
+The entire API is **async end-to-end** - from HTTP request handling down to database queries:
 
 ```python
 # database.py
@@ -511,7 +511,7 @@ async def get_db():
 ```
 
 ```python
-# Example router — fully async
+# Example router - fully async
 @router.get("/pricing/")
 async def list_pricing(
     limit: int = 500,
@@ -526,8 +526,8 @@ async def list_pricing(
 
 **Why async?**
 - Handles thousands of concurrent requests without blocking
-- No thread pool required — single-threaded event loop
-- Each DB query releases the event loop while waiting — other requests are served
+- No thread pool required - single-threaded event loop
+- Each DB query releases the event loop while waiting - other requests are served
 - Critical for the `/pricing/` endpoint which serves 5,000+ records in batches
 
 ---
@@ -625,7 +625,7 @@ CMD ["uvicorn", "app.main:app", \
 ```
 
 **Why multi-stage?**
-- Final image has **no pip, no build tools** — only the installed packages and app code
+- Final image has **no pip, no build tools** - only the installed packages and app code
 - Smaller image = faster pull times in GKE
 - Reduced attack surface in production
 
@@ -731,14 +731,14 @@ Push to main branch
         │
         ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Job 1 — Setup                                                │
+│  Job 1 - Setup                                                │
 │  • Detect auto-commits → set ABORT=true if found            │
 │  • Set SHOULD_DEPLOY=true for main branch push              │
 └──────────────────────────────────┬───────────────────────────┘
                                    │
                                    ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Job 2 — CI (Lint, Test)                                      │
+│  Job 2 - CI (Lint, Test)                                      │
 │  • pip install -r requirements.txt                           │
 │  • flake8 app/ --max-line-length=120   ← FAIL if violations  │
 │  • pytest tests/ -v                   ← FAIL if tests fail   │
@@ -746,7 +746,7 @@ Push to main branch
                                    │
                                    ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Job 3 — Build & Push Image                                   │
+│  Job 3 - Build & Push Image                                   │
 │  • Authenticate GCP via WIF (no JSON keys!)                  │
 │  • docker buildx build -f Docker/Dockerfile --push .        │
 │  • pip install bump2version                                  │
@@ -756,7 +756,7 @@ Push to main branch
                                    │
                                    ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Job 4 — GKE-Dev Deploy                                       │
+│  Job 4 - GKE-Dev Deploy                                       │
 │  • kubectl set image deployment/dhg-vaccinefee-api \        │
 │      dhg-vaccinefee-api=${IMAGE}:${SHA}                      │
 │  • kubectl rollout status → zero-downtime rolling update     │
@@ -802,17 +802,17 @@ flake8 app/ \
 ### Key Code Patterns
 
 ```python
-# ✅ Async all the way — never block the event loop
+# ✅ Async all the way - never block the event loop
 @router.get("/hospitals/")
 async def list_hospitals(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Hospital))
     return result.scalars().all()
 
-# ✅ bcrypt direct — not passlib
+# ✅ bcrypt direct - not passlib
 import bcrypt
 hashed = bcrypt.hashpw(pwd.encode("utf-8"), bcrypt.gensalt())
 
-# ✅ All secrets from environment — never hardcoded
+# ✅ All secrets from environment - never hardcoded
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 ```
@@ -821,7 +821,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 ## 🔧 Environment Variables
 
-All environment variables are injected from **K8s Secrets** at runtime — never hardcoded in code or Docker images:
+All environment variables are injected from **K8s Secrets** at runtime - never hardcoded in code or Docker images:
 
 | Variable | Source | Description |
 |---|---|---|
@@ -839,22 +839,22 @@ All environment variables are injected from **K8s Secrets** at runtime — never
 
 | Layer | Implementation |
 |---|---|
-| 🔐 **Auth** | JWT HS256 — 8-hour expiry, validated on every protected request |
-| 👥 **RBAC** | Admin vs Viewer — enforced at router level via `Depends(require_admin)` |
-| 🔒 **Password** | bcrypt with gensalt — never stored plain text |
+| 🔐 **Auth** | JWT HS256 - 8-hour expiry, validated on every protected request |
+| 👥 **RBAC** | Admin vs Viewer - enforced at router level via `Depends(require_admin)` |
+| 🔒 **Password** | bcrypt with gensalt - never stored plain text |
 | 🛡️ **No public DB** | PostgreSQL only reachable via PSC private IP `10.10.0.3` |
 | 🔐 **No secrets in code** | All keys in K8s Secrets → env vars at runtime |
-| 🌐 **CORS** | Configured in `main.py` — restrict origins in production |
-| 🔒 **HTTPS** | All traffic via GKE Gateway — TLS 1.2+ enforced |
-| 🔐 **WIF** | No JSON keys — OIDC tokens per CI run |
-| 🐳 **Minimal image** | `python:3.12-slim` — no unnecessary packages |
+| 🌐 **CORS** | Configured in `main.py` - restrict origins in production |
+| 🔒 **HTTPS** | All traffic via GKE Gateway - TLS 1.2+ enforced |
+| 🔐 **WIF** | No JSON keys - OIDC tokens per CI run |
+| 🐳 **Minimal image** | `python:3.12-slim` - no unnecessary packages |
 | 🔑 **RBAC K8s** | ServiceAccount with least-privilege IAM roles |
 
 ---
 
 ## 🔖 Automated Versioning
 
-This repo uses **bump2version** to automatically increment the version number on every successful deployment to GKE dev — no manual version management needed.
+This repo uses **bump2version** to automatically increment the version number on every successful deployment to GKE dev - no manual version management needed.
 
 ### How It Works
 
@@ -880,8 +880,8 @@ git push origin main --follow-tags
 
 | File | Location | Purpose |
 |---|---|---|
-| 📄 `.bumpversion.cfg` | Repo root | Master config — version format, files to update, commit/tag message |
-| 📄 `VERSION` | Repo root | Plain text current version — single source of truth |
+| 📄 `.bumpversion.cfg` | Repo root | Master config - version format, files to update, commit/tag message |
+| 📄 `VERSION` | Repo root | Plain text current version - single source of truth |
 
 ### `.bumpversion.cfg`
 
@@ -903,8 +903,8 @@ replace = {new_version}
 | Command | Before | After | When Used |
 |---|---|---|---|
 | `bump2version patch` | `0.0.1` | `0.0.2` | Every push to main (automatic) |
-| `bump2version minor` | `0.0.2` | `0.1.0` | New feature — run manually |
-| `bump2version major` | `0.1.0` | `1.0.0` | Major release — run manually |
+| `bump2version minor` | `0.0.2` | `0.1.0` | New feature - run manually |
+| `bump2version major` | `0.1.0` | `1.0.0` | Major release - run manually |
 
 ### What You See on GitHub After Each Push
 
@@ -915,7 +915,7 @@ Commits on main
 ● fix: your actual commit message                      bikram-singh
 ```
 
-> ⚠️ **Guardrail built-in:** The `setup` job detects auto-commits (`[.*]` pattern in commit message) and sets `ABORT=true` — preventing an infinite loop where the bot's version bump triggers another pipeline run.
+> ⚠️ **Guardrail built-in:** The `setup` job detects auto-commits (`[.*]` pattern in commit message) and sets `ABORT=true` - preventing an infinite loop where the bot's version bump triggers another pipeline run.
 
 ---
 
